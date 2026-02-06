@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>One Honest Question 💕</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    height: 100vh;
+    background: linear-gradient(135deg, #ffe6ee, #fff7fa);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Quicksand', sans-serif;
+    overflow: hidden;
+}
+
+/* 🎀 background emojis (hidden initially) */
+.bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    display: none;
+}
+
+.bg span {
+    position: absolute;
+    font-size: 14px;
+    opacity: 0.7;
+    animation: float linear infinite;
+}
+
+@keyframes float {
+    from { transform: translateY(100vh) rotate(0deg); }
+    to { transform: translateY(-120vh) rotate(360deg); }
+}
+
+/* card */
+.card {
+    background: white;
+    width: 390px;
+    padding: 45px 38px;
+    border-radius: 32px;
+    text-align: center;
+    box-shadow: 0 25px 55px rgba(255, 110, 150, 0.3);
+    z-index: 2;
+    animation: pop 0.8s ease;
+}
+
+@keyframes pop {
+    from { opacity: 0; transform: scale(0.85); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+h1 {
+    font-family: 'Pacifico', cursive;
+    color: #ff5c8a;
+    font-size: 32px;
+}
+
+#question {
+    margin-top: 18px;
+    font-size: 18px;
+    color: #555;
+    min-height: 80px;
+    line-height: 1.6;
+}
+
+.buttons {
+    margin-top: 28px;
+    position: relative;
+    height: 100px;
+}
+
+button {
+    padding: 12px 26px;
+    border-radius: 26px;
+    border: none;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.choice {
+    background: #ffd6e3;
+    color: #c9184a;
+    margin: 6px;
+}
+
+.choice:hover {
+    transform: scale(1.08);
+    background: #ffb3c6;
+}
+
+#yes {
+    background: #ff5c8a;
+    color: white;
+}
+
+#no {
+    position: absolute;
+    left: 200px;
+    background: white;
+    color: #999;
+    border: 2px solid #ddd;
+}
+
+/* little note */
+.note {
+    position: fixed;
+    background: #fff;
+    color: #ff5c8a;
+    padding: 8px 14px;
+    border-radius: 18px;
+    font-size: 14px;
+    box-shadow: 0 10px 25px rgba(255, 92, 138, 0.35);
+    pointer-events: none;
+    animation: notePop 1.5s ease forwards;
+    z-index: 5;
+    font-weight: 600;
+}
+
+@keyframes notePop {
+    0% { opacity: 0; transform: scale(0.8) translateY(5px); }
+    20% { opacity: 1; transform: scale(1); }
+    100% { opacity: 0; transform: translateY(-15px); }
+}
+
+#result {
+    display: none;
+    font-family: 'Pacifico', cursive;
+    font-size: 26px;
+    color: #ff3366;
+}
+</style>
+</head>
+
+<body>
+
+<div class="bg" id="bg"></div>
+
+<div class="card">
+    <h1>Hey You 💕</h1>
+
+    <div id="question">
+        I want to ask you something — just be honest with me 💗
+    </div>
+
+    <div class="buttons" id="buttons">
+        <button class="choice" onclick="next('start')">Okay 😊</button>
+    </div>
+
+    <div id="result">
+        I’m really happy you said yes 🥺💖  
+        Valentine’s date confirmed 🎀🌸
+    </div>
+</div>
+
+<script>
+const questionEl = document.getElementById("question");
+const buttonsEl = document.getElementById("buttons");
+const resultEl = document.getElementById("result");
+const bg = document.getElementById("bg");
+
+function next(step) {
+    if (step === "start") {
+        questionEl.innerHTML = "Do you genuinely enjoy talking to me?";
+        buttonsEl.innerHTML = `
+            <button class="choice" onclick="next('talkYes')">Yes, I do</button>
+            <button class="choice" onclick="next('talkSometimes')">Sometimes</button>
+        `;
+    } else if (step === "talkYes") {
+        questionEl.innerHTML = "That means a lot 💗<br>Do you feel comfortable being yourself with me?";
+        buttonsEl.innerHTML = `
+            <button class="choice" onclick="next('final')">Yes</button>
+            <button class="choice" onclick="next('final')">Not always</button>
+        `;
+    } else {
+        questionEl.innerHTML = "Will you be my valentine?💕";
+        finalQuestion();
+    }
+}
+
+function finalQuestion() {
+    buttonsEl.innerHTML = `
+        <button id="yes">YES 💖</button>
+        <button id="no">NO 🙃</button>
+    `;
+    document.getElementById("yes").onclick = yesClicked;
+
+    const noBtn = document.getElementById("no");
+    noBtn.addEventListener("mouseenter", moveNo);
+    noBtn.addEventListener("click", moveNo);
+}
+
+function moveNo(e) {
+    const no = document.getElementById("no");
+    no.style.left = Math.random() * 240 + "px";
+    no.style.top = Math.random() * 60 + "px";
+    showNote(e.clientX, e.clientY);
+}
+
+/* 💬 little note near cursor */
+function showNote(x, y) {
+    const note = document.createElement("div");
+    note.className = "note";
+    note.innerHTML = "You have no option 😌";
+    note.style.left = x + 10 + "px";
+    note.style.top = y + 10 + "px";
+    document.body.appendChild(note);
+
+    setTimeout(() => note.remove(), 1500);
+}
+
+function yesClicked() {
+    questionEl.style.display = "none";
+    buttonsEl.style.display = "none";
+    resultEl.style.display = "block";
+    launchBackground();
+}
+
+/* 🎀 emoji background AFTER YES */
+function launchBackground() {
+    bg.style.display = "block";
+    const emojis = ["🎀","🎁","🍪","🌸","🌷","💖","💕","💐","🍓","🐻"];
+
+    for (let i = 0; i < 150; i++) {
+        const e = document.createElement("span");
+        e.innerHTML = emojis[Math.floor(Math.random() * emojis.length)];
+        e.style.left = Math.random() * 100 + "vw";
+        e.style.animationDuration = (Math.random() * 15 + 10) + "s";
+        e.style.fontSize = (Math.random() * 10 + 10) + "px";
+        bg.appendChild(e);
+    }
+}
+</script>
+
+</body>
+</html>
